@@ -3,9 +3,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../prisma.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { ensureDatabase } from "../db.js";
+import { defaultWebsiteSections } from "../defaultWebsite.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.resolve(__dirname, "../../uploads");
@@ -33,7 +35,7 @@ async function loadWebsiteRow() {
   return (
     (await prisma.websiteContent.findFirst()) ??
     (await prisma.websiteContent.create({
-      data: { sections: [] },
+      data: { sections: defaultWebsiteSections as Prisma.InputJsonValue },
     }))
   );
 }
@@ -48,7 +50,7 @@ websiteRouter.get("/", async (_req, res) => {
       res.json(await loadWebsiteRow());
     } catch (retryErr) {
       console.error("website GET retry failed:", retryErr);
-      res.status(500).json({ error: "Server error" });
+      res.json({ id: 0, sections: defaultWebsiteSections });
     }
   }
 });

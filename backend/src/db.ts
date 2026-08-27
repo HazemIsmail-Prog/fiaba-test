@@ -7,8 +7,8 @@ const backendRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 
 export function ensureDatabase() {
   fs.mkdirSync(path.join(backendRoot, "data"), { recursive: true });
-  const prismaBin = path.join(backendRoot, "node_modules/.bin/prisma");
-  const result = spawnSync(prismaBin, ["db", "push", "--skip-generate"], {
+  const prismaCli = path.join(backendRoot, "node_modules/prisma/build/index.js");
+  const result = spawnSync(process.execPath, [prismaCli, "db", "push", "--skip-generate"], {
     cwd: backendRoot,
     stdio: "inherit",
     env: process.env,

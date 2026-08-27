@@ -13,7 +13,7 @@ export const isProd = process.env.NODE_ENV === "production";
 if (isProd) {
   const dbFile = path.join(backendRoot, "data", "fiaba.db");
   fs.mkdirSync(path.dirname(dbFile), { recursive: true });
-  process.env.DATABASE_URL = `file:${dbFile}`;
+  process.env.DATABASE_URL = `file://${dbFile}`;
 }
 
 const WEAK_SECRETS = new Set(["change-me", "fiaba-dev-secret-change-in-production"]);
