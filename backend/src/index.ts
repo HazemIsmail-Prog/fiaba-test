@@ -103,11 +103,15 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 app.use(errorHandler);
 
 async function start() {
-  ensureDatabase();
-  await bootstrapAdmin();
   app.listen(port, "0.0.0.0", () => {
     console.log(`FIABA listening on port ${port}`);
   });
+  try {
+    ensureDatabase();
+    await bootstrapAdmin();
+  } catch (err) {
+    console.error("Database setup failed:", err);
+  }
 }
 
 start().catch((err) => {

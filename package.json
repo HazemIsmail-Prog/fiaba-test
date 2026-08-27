@@ -6,9 +6,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "postinstall": "npm install --prefix backend --include=dev && npm install --prefix frontend --include=dev && npm install --prefix website --include=dev",
+    "postinstall": "npm install --prefix backend --include=dev && npm install --prefix frontend --include=dev && npm install --prefix website --include=dev && npm run build",
     "build": "npm run build --prefix website && npm run build --prefix frontend && npm run build --prefix backend && node scripts/copy-static.mjs",
-    "start": "node scripts/start.mjs",
+    "start": "node server.js",
     "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend && npm run typecheck --prefix website"
   }
 }

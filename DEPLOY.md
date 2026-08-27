@@ -32,9 +32,7 @@ That compiles the API and copies the website and portal into `backend/public/`.
 4. Application type: **express**
 5. Build script: `build`
 6. **Output directory: leave empty**
-7. Entry file: `scripts/start.mjs`
-
-Do not set the entry file to `backend/dist/index.js`. Hostinger starts that file before TypeScript has been compiled. `scripts/start.mjs` builds the app if `dist` is missing, then starts the server.
+7. Entry file: `server.js`
 
 ## 3. Environment variables
 
