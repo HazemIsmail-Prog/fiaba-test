@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  manager
+  accountant
+  secretary
+  client
+}
+
+enum AppointmentStatus {
+  pending
+  scheduled
+  confirmed
+  cancelled
+  completed
+}
+
+enum EventStatus {
+  inquiry
+  planning
+  confirmed
+  completed
+  cancelled
+}
+
+enum ContractStatus {
+  draft
+  sent
+  signed
+  cancelled
+}
+
+enum InvoiceStatus {
+  draft
+  sent
+  partial
+  paid
+  overdue
+}
+
+enum MeetingStatus {
+  scheduled
+  completed
+  cancelled
+}
+
+enum MeetingItemStatus {
+  pending
+  approved
+  rejected
+  in_progress
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  name         String
+  client       Client?
+}
+
+model Client {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone        String        @default("")
+  address      String        @default("")
+  notes        String        @default("")
+  events       Event[]
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          Int                @id @default(autoincrement())
+  clientId    Int?
+  client      Client?            @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  guestName   String
+  guestEmail  String
+  guestPhone  String
+  message     String             @default("")
+  status      AppointmentStatus  @default(pending)
+  requestedAt DateTime
+}
+
+model Event {
+  id        Int         @id @default(autoincrement())
+  clientId  Int
+  client    Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title     String
+  type      String
+  status    EventStatus @default(inquiry)
+  location  String      @default("")
+  eventDate DateTime?
+  contracts Contract[]
+  meetings  Meeting[]
+}
+
+model Contract {
+  id             Int            @id @default(autoincrement())
+  eventId        Int
+  event          Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  contractNumber String         @unique
+  status         ContractStatus @default(draft)
+  invoices       Invoice[]
+}
+
+model Invoice {
+  id              Int           @id @default(autoincrement())
+  contractId      Int
+  contract        Contract      @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  invoiceNumber   String        @unique
+  amount          Decimal
+  paidAmount      Decimal       @default(0)
+  status          InvoiceStatus @default(draft)
+  invoiceDateTime DateTime
+  invoiceDueDate  DateTime
+  payments        Payment[]
+}
+
+model Payment {
+  id              Int      @id @default(autoincrement())
+  invoiceId       Int
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  paymentNumber   String   @unique
+  amount          Decimal
+  method          String
+  paymentDateTime DateTime
+}
+
+model Meeting {
+  id          Int            @id @default(autoincrement())
+  eventId     Int
+  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  scheduledAt DateTime
+  status      MeetingStatus  @default(scheduled)
+  items       MeetingItem[]
+}
+
+model MeetingItem {
+  id         Int                @id @default(autoincrement())
+  meetingId  Int
+  meeting    Meeting            @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  name       String
+  category   String             @default("")
+  status     MeetingItemStatus  @default(pending)
+  notes      String             @default("")
+}
+
+model WebsiteContent {
+  id       Int  @id @default(autoincrement())
+  sections Json
+}

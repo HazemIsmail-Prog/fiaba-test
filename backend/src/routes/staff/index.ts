@@ -1,0 +1,23 @@
+import { Router } from "express";
+import { requireAuth } from "../../middleware/auth.js";
+import { usersRouter } from "./users.js";
+import { clientsRouter } from "./clients.js";
+import { eventsRouter } from "./events.js";
+import { appointmentsRouter } from "./appointments.js";
+import { contractsRouter } from "./contracts.js";
+import { invoicesRouter } from "./invoices.js";
+import { paymentsRouter } from "./payments.js";
+import { meetingsRouter } from "./meetings.js";
+import { meetingItemsRouter } from "./meetingItems.js";
+
+export const staffRouter = Router();
+staffRouter.use(requireAuth);
+staffRouter.use("/users", usersRouter);
+staffRouter.use("/clients", clientsRouter);
+staffRouter.use("/events", eventsRouter);
+staffRouter.use("/appointments", appointmentsRouter);
+staffRouter.use("/contracts", contractsRouter);
+staffRouter.use("/invoices", invoicesRouter);
+staffRouter.use("/payments", paymentsRouter);
+staffRouter.use("/meetings", meetingsRouter);
+staffRouter.use("/meeting-items", meetingItemsRouter);
