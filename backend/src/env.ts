@@ -1,12 +1,20 @@
 import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(here, "../.env") });
+const backendRoot = path.resolve(here, "..");
+dotenv.config({ path: path.resolve(backendRoot, ".env") });
 dotenv.config();
 
 export const isProd = process.env.NODE_ENV === "production";
+
+if (isProd) {
+  const dbFile = path.join(backendRoot, "data", "fiaba.db");
+  fs.mkdirSync(path.dirname(dbFile), { recursive: true });
+  process.env.DATABASE_URL = `file:${dbFile}`;
+}
 
 const WEAK_SECRETS = new Set(["change-me", "fiaba-dev-secret-change-in-production"]);
 

@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import { prisma } from "../prisma.js";
 import { requireAuth, requireRole } from "../middleware/auth.js";
+import { ensureDatabase } from "../db.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.resolve(__dirname, "../../uploads");
@@ -28,13 +29,28 @@ const upload = multer({
 
 export const websiteRouter = Router();
 
-websiteRouter.get("/", async (_req, res) => {
-  const row =
+async function loadWebsiteRow() {
+  return (
     (await prisma.websiteContent.findFirst()) ??
     (await prisma.websiteContent.create({
       data: { sections: [] },
-    }));
-  res.json(row);
+    }))
+  );
+}
+
+websiteRouter.get("/", async (_req, res) => {
+  try {
+    res.json(await loadWebsiteRow());
+  } catch (err) {
+    console.error("website GET failed:", err);
+    try {
+      ensureDatabase();
+      res.json(await loadWebsiteRow());
+    } catch (retryErr) {
+      console.error("website GET retry failed:", retryErr);
+      res.status(500).json({ error: "Server error" });
+    }
+  }
 });
 
 websiteRouter.put("/", requireAuth, requireRole("admin", "manager"), async (req, res) => {
