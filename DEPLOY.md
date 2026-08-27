@@ -30,11 +30,11 @@ That compiles the API and copies the website and portal into `backend/public/`.
 2. Deploy from **GitHub** (whole repo) or **Upload** a zip of this project
 3. Use **Node.js 20** or **22**
 4. Application type: **express**
-5. Build script: `build` (skip this if you already built locally and uploaded `backend/dist` + `backend/public`)
-6. Entry file: `backend/dist/index.js`
-7. Start command / `npm start` should run `node backend/dist/index.js`
+5. Build script: `build`
+6. **Output directory: leave empty**
+7. Entry file: `scripts/start.mjs`
 
-If you upload **only** the `backend/` folder, set the entry file to `dist/index.js` and start to `node dist/index.js`.
+Do not set the entry file to `backend/dist/index.js`. Hostinger starts that file before TypeScript has been compiled. `scripts/start.mjs` builds the app if `dist` is missing, then starts the server.
 
 ## 3. Environment variables
 
